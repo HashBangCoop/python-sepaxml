@@ -428,13 +428,16 @@ class SepaDD(SepaPaymentInitn):
 
         TX_nodes['MndtRltdInfNode'].append(TX_nodes['MndtIdNode'])
         TX_nodes['MndtRltdInfNode'].append(TX_nodes['DtOfSgntrNode'])
-        TX_nodes['MndtRltdInfNode'].append(TX_nodes['AmdmntIndNode'])
+
         if 'previous_IBAN' in payment:
             previous_iban = payment.get('previous_IBAN')
             if payment['IBAN'] != previous_iban:
                 TX_nodes['AmdmntIndNode'].text = 'true'
                 TX_nodes['MndtRltdInfNode'].append(TX_nodes['AmdmntIndNode'])
                 TX_nodes['MndtRltdInfNode'].append(TX_nodes['AmdmntInfDtlsNode'])
+        else:
+            TX_nodes['MndtRltdInfNode'].append(TX_nodes['AmdmntIndNode'])
+
         TX_nodes['DrctDbtTxNode'].append(TX_nodes['MndtRltdInfNode'])
         TX_nodes['DrctDbtTxInfNode'].append(TX_nodes['DrctDbtTxNode'])
 

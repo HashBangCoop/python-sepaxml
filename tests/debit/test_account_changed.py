@@ -26,8 +26,8 @@ SAMPLE_RESULT = b"""
     <GrpHdr>
       <MsgId>20240730112717-6ee4a6dd7e67</MsgId>
       <CreDtTm>2024-07-30T11:27:17</CreDtTm>
-      <NbOfTxs>4</NbOfTxs>
-      <CtrlSum>306.65</CtrlSum>
+      <NbOfTxs>5</NbOfTxs>
+      <CtrlSum>396.65</CtrlSum>
       <InitgPty>
         <Nm>Miller &amp; Son Ltd</Nm>
         <Id>
@@ -43,8 +43,8 @@ SAMPLE_RESULT = b"""
       <PmtInfId>MillerSonLtd-a9f5ba6196ee</PmtInfId>
       <PmtMtd>DD</PmtMtd>
       <BtchBookg>true</BtchBookg>
-      <NbOfTxs>4</NbOfTxs>
-      <CtrlSum>306.65</CtrlSum>
+      <NbOfTxs>5</NbOfTxs>
+      <CtrlSum>396.65</CtrlSum>
       <PmtTpInf>
         <SvcLvl>
           <Cd>SEPA</Cd>
@@ -223,13 +223,42 @@ SAMPLE_RESULT = b"""
           <Ustrd>Joker value SMNDA instead</Ustrd>
         </RmtInf>
       </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>MillerSonLtd-056d67ec1a38</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">90.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>HELLOTHERE</MndtId>
+            <DtOfSgntr>2024-07-30</DtOfSgntr>
+            <AmdmntInd>false</AmdmntInd>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BCDMFRPPXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Ms Nothing to see here</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>FR7641439000000000444444460</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>No bank account changes</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
     </PmtInf>
   </CstmrDrctDbtInitn>
 </Document>
 """
 
 
-def test_four_debits(sdd):
+def test_five_debits(sdd):
     payment1 = {
         "name": "Mr Changing Banks",
         "IBAN": "FR7617206000000012345678982",
@@ -278,10 +307,22 @@ def test_four_debits(sdd):
         "mandate_date": datetime.date.today(),
         "description": "Joker value SMNDA instead",
     }
+    payment5 = {
+        "name": "Ms Nothing to see here",
+        "IBAN": "FR7641439000000000444444460",
+        "BIC": "BCDMFRPPXXX",
+        "amount": 9000,
+        "type": "RCUR",
+        "collection_date": datetime.date.today(),
+        "mandate_id": "HELLOTHERE",
+        "mandate_date": datetime.date.today(),
+        "description": "No bank account changes",
+    }
     sdd.add_payment(payment1)
     sdd.add_payment(payment2)
     sdd.add_payment(payment3)
     sdd.add_payment(payment4)
+    sdd.add_payment(payment5)
     xmlout = sdd.export()
     xmlpretty = validate_xml(xmlout, "pain.008.001.02")
     with open('xmlexport.xml', 'w') as f:
